@@ -1,5 +1,8 @@
 import { Component, OnInit } from '@angular/core';
 import { Product } from './product';
+import { AlertifyService } from '../services/alertify.service';
+import { ProductService } from '../services/product.service';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
   selector: 'app-product',
@@ -8,15 +11,41 @@ import { Product } from './product';
 })
 export class ProductComponent implements OnInit {
 
-  constructor() { }
+  constructor(private router: Router, private alertifyService: AlertifyService, private productService: ProductService, private activatedRoute: ActivatedRoute) { }
   title = "Product List"
   filterText = ""
-  products: Product[]=[
-    {id:1,name:"Product 1",description:"test2",createDate:Date.now(),price:1000,stock:10},
-    {id:2,name:"Product 2",description:"test2",createDate:Date.now(),price:200,stock:20},
-  ];
+  products: Product[];
+  dataLoaded = false;
 
   ngOnInit(): void {
+    this.activatedRoute.params.subscribe(param => {
+
+      if (param["addRandom"]) {
+
+        this.dataLoaded=false;
+       this.setProductRandom();
+
+
+      } else
+        this.getProduct(param["name"])
+
+    })
   }
+  getProduct(name: string) {
+    this.productService.getProducts(name)
+      .subscribe(data => {
+        this.dataLoaded = true;
+        this.products = data;
+      })
+  }
+  setProductRandom(){
+    this.productService.addProductRandom()
+    .subscribe(data => {
+      this.dataLoaded = true;
+      this.alertifyService.success("The data has been successfully added.")
+      this.router.navigateByUrl('/products')
+    })
+  }
+
 
 }
