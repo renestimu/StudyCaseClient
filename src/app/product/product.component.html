@@ -1,1 +1,39 @@
-<p>product works!</p>
+<h3 *ngIf="products; else noProduct">{{title}}</h3>
+
+<div class="mb-3">
+
+  <input class="form-control" id="productName" aria-describedby="emailHelp" placeholder="Arama metninizi giriniz"
+  [(ngModel)]="filterText">
+  <!-- <div *ngIf="filterText" class="form-text" >Şu an {{filterText}} aradınız</div> -->
+</div>
+<div class="row">
+  <ng-template #noProduct>
+    <div class="alert alert-primary" role="alert">
+      Product not found
+    </div>
+  </ng-template>
+  <table class="table" *ngIf="products">
+    <thead>
+      <tr>
+        <th scope="col">#</th>
+        <th scope="col">Name</th>
+        <th scope="col">Description</th>
+        <th scope="col">Stock</th>
+        <th scope="col">Price</th>
+        <th scope="col">CreateDate</th>
+      </tr>
+    </thead>
+    <tbody class="table-group-divider">
+      <tr *ngFor="let product of products | productFilter:filterText">
+        <th scope="row">{{product.id}}</th>
+        <td>{{product.name}}</td>
+        <td>{{product.description}}</td>
+        <td>{{product.stock}}</td>
+        <td>{{product.price | currency:'TRY':'symbol':'3.2-2':'tr'}}</td>
+        <td>{{product.createDate | date:'dd/MM/yyyy hh:mm'}}</td>
+      </tr>
+
+    </tbody>
+  </table>
+
+</div>
